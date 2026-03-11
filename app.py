@@ -163,25 +163,7 @@ class ToDoHandler:
         )
         return response.choices[0].message.parsed
 
-    def rerun(
-        self, reply: str, message: str, history: List[dict[str, Any]], feedback: str
-    ) -> str:
-        updated_system_prompt = (
-            evaluator_system_prompt
-            + f"\n\n## Previous answer rejected\nYou just tried to reply, but the quality control rejected your reply\n"
-        )
-        updated_system_prompt += f"## Your attempted answer: {reply}\n\n"
-        updated_system_prompt += f"## Reason for rejection: {feedback}\n\n"
-        messages = [
-            {"role": "system", "content": updated_system_prompt},
-            {
-                "role": "user",
-                "content": self.evaluator_user_prompt(reply, message, history),
-            },
-        ]
-        return self.loop(messages)
-
-    def chat(self, user_message: str, history: list, max_retries: int = 2) -> str:
+    def chat(self, user_message: str, history: list, max_retries: int = 5) -> str:
         messages = [
             {"role": "system", "content": system_message},
             {"role": "user", "content": user_message},
